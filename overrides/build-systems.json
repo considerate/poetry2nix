@@ -16952,6 +16952,9 @@
   "qbittorrent-api": [
     "setuptools"
   ],
+  "qasync": [
+    "poetry-core"
+  ],
   "qcelemental": [
     "poetry-core",
     "setuptools"
