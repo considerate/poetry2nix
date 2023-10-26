@@ -2457,21 +2457,11 @@ lib.composeManyExtensions [
         in
 
         {
-          buildInputs = old.buildInputs ++ [
-            pkgs.dbus
-            pkgs.libxkbcommon
-            pkgs.gtk3
-            pkgs.speechd
-            pkgs.gst
-            pkgs.gst_all_1.gst-plugins-base
-            pkgs.gst_all_1.gstreamer
-            pkgs.postgresql.lib
-            pkgs.unixODBC
-            pkgs.pcsclite
-          ];
           propagatedBuildInputs = old.propagatedBuildInputs ++ [
             self.dbus-python
+            "${self.pyqt6-qt6}/${self.python.sitePackages}/PyQt6/Qt6"
           ];
+          QMAKE_LIBS = "-L${self.pyqt6-qt6}/${self.python.sitePackages}/PyQt6/Qt6/lib";
           nativeBuildInputs = old.nativeBuildInputs ++ [
             pkgs.pkg-config
             self.pyqt6-sip
@@ -2479,7 +2469,6 @@ lib.composeManyExtensions [
             self.pyqt-builder
             pkgs.xorg.lndir
             pkgs.qt6.qmake
-            pkgs.qt6.full
           ];
           patches = [
             confirm-license
@@ -2507,10 +2496,12 @@ lib.composeManyExtensions [
         });
 
       pyqt6-qt6 = super.pyqt6-qt6.overridePythonAttrs (old: {
-        autoPatchelfIgnoreMissingDeps = [ "libmysqlclient.so.21" ];
+        autoPatchelfIgnoreMissingDeps = [ "libmysqlclient.so.21" "libQt6*" ];
+        preFixup = ''
+          addAutoPatchelfSearchPath $out/${self.python.sitePackages}/PyQt6/Qt6/lib
+        '';
         propagatedBuildInputs = old.propagatedBuildInputs ++ [
           pkgs.libxkbcommon
-          pkgs.qt6.full
           pkgs.gtk3
           pkgs.speechd
           pkgs.gst
@@ -2519,6 +2510,16 @@ lib.composeManyExtensions [
           pkgs.postgresql.lib
           pkgs.unixODBC
           pkgs.pcsclite
+          pkgs.xorg.libxcb
+          pkgs.xorg.xcbutil
+          pkgs.xorg.xcbutilcursor
+          pkgs.xorg.xcbutilerrors
+          pkgs.xorg.xcbutilimage
+          pkgs.xorg.xcbutilkeysyms
+          pkgs.xorg.xcbutilrenderutil
+          pkgs.xorg.xcbutilwm
+          pkgs.libdrm
+          pkgs.pulseaudio
         ];
       });
 
